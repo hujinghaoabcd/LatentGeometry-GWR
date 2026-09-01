@@ -1,0 +1,39 @@
+name: parity-pygwrx
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/latentgeometry_gwr/**"
+      - "experiments/validation/lggwr_vs_pygwrx.py"
+      - ".github/workflows/parity-pygwrx.yml"
+  workflow_dispatch:
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install standalone research baseline
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Install pinned pyGWRx source snapshot
+        run: |
+          python -m pip install "git+https://github.com/hujinghaoabcd/pyGWRx.git@ee26988a0c5b7ed15edf2d6065f538ed0d4d5429"
+
+      - name: Run strict parity validation
+        run: python experiments/validation/lggwr_vs_pygwrx.py
+
+      - name: Upload parity evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: lggwr-vs-pygwrx-parity
+          path: results/validation/lggwr_vs_pygwrx/summary.json
+          if-no-files-found: error
