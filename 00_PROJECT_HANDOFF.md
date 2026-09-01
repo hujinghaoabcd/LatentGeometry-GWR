@@ -29,6 +29,31 @@
 - `docs/decisions/` ADR
 - 若影响整体流程，更新本文
 
+### 2.4 当前两条主模型路线必须同时保留
+
+**不要在没有完成理论和实验裁决前，只记住其中一条。**
+
+核心记录：`docs/design/JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md`。
+
+当前同时保留：
+
+1. **Path A — joint LG-GWR / learned geographic geometry**
+   - 算法创新性更强；
+   - `u=[s,c] -> A -> z` 形成 non-separable geographic-context geometry；
+   - `M=A^T A` 的 geographic-context cross block `M_sc` 是区别于 SGWR-style separable fusion 的关键结构；
+   - 候选地学解释：process-conditioned deformation / reconstruction of geographic geometry；
+   - 风险：可能过度变形 physical geography，且必须与 generic metric learning / CEGWR 等拉开理论边界。
+
+2. **Path B — geography-preserving / separable process-conditioned locality**
+   - 保留 physical geographic distance 作为显式锚点；
+   - process-relevant geographic context 调整有效局部权重结构；
+   - 地学解释更直接、更稳健；
+   - 风险：与 SGWR / SGWR-GD / similarity-GWR 文献重叠更大，简单 geographic × contextual kernel 不足以构成最终创新。
+
+**当前没有最终主模型。** Joint 不得因为“地理解释更难”而被提前放弃；geography-preserving 也不得因为“算法看起来没那么新”而被提前放弃。
+
+术语约束：后续避免“空间借样”“信息借用”等表达。优先使用“局地信息整合”“邻域贡献”“局部样本权重”“有效邻域构成”“局地权重分配”等。
+
 ## 3. Pinned source anchors
 
 ### LG-GWR
@@ -149,10 +174,10 @@ Separable attribute channel 同理使用 `C_a` 与 `b_a`。
 1. 量化 random restarts 的 initialization-dependent Frobenius norm 对 fixed-bandwidth / selected-bandwidth 结果的实际影响；
 2. 先添加 canonical `(C,b)` / `(C_a,b_a)` experimental diagnostics，不改变 fitted weights；
 3. controlled simulation 比较 current factor parameterization 与 explicit canonicalization；
-4. 决定论文最终是“factor optimization + canonical reporting”还是直接 normalized PSD metric-shape formulation；
-5. identification 决策后审查 LOO objective + AICc bandwidth coupling；
-6. 再审 joint vs geography-preserving/separable；
-7. 最后才进入系统 benchmark / real-data performance experiments。
+4. identification 决策后审查 LOO objective + AICc bandwidth coupling；
+5. 基于 `JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md` 设计 joint vs geography-preserving 的针对性理论和仿真实验；
+6. 对照 SGWR / SGWR-GD / EDSGWR / CEGWR / supervised spatial metric learning / non-Euclidean GWR / PSDM-GWR / MGWR，明确各自解决了什么与未解决什么；
+7. 最后才决定主模型，并进入系统 benchmark / real-data performance experiments。
 
 ## 7. 当前禁止事项
 
@@ -160,7 +185,10 @@ Separable attribute channel 同理使用 `C_a` 与 `b_a`。
 - 不要解释 `A` 的行/latent axes 为唯一物理含义；
 - 不要无条件把 raw `metric_matrix_` 当成唯一可识别 metric；
 - 不要为了精度直接引入 nonlinear embedding；
-- 不要提前把 joint geometry 冻结成最终论文算法。
+- 不要提前把 joint geometry 冻结成最终论文算法；
+- 不要提前否定 joint geometry；
+- 不要提前否定 geography-preserving/separable geometry；
+- 不要使用“空间借样/信息借用”作为核心论文术语。
 
 ## 8. 跨对话恢复顺序
 
@@ -169,8 +197,9 @@ Separable attribute channel 同理使用 `C_a` 与 `b_a`。
 3. `docs/project/CURRENT_STATUS.md`
 4. `docs/design/LGGWR_BASELINE_SPEC.md`
 5. `docs/design/METRIC_BANDWIDTH_IDENTIFIABILITY.md`
-6. `docs/design/RESEARCH_QUESTIONS.md`
-7. `results/validation/lggwr_vs_pygwrx/summary.json`
-8. `results/validation/basicgwr_reference_anchor/summary.json`
-9. 最新 ADR
-10. 当前实验结果
+6. `docs/design/JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md`
+7. `docs/design/RESEARCH_QUESTIONS.md`
+8. `results/validation/lggwr_vs_pygwrx/summary.json`
+9. `results/validation/basicgwr_reference_anchor/summary.json`
+10. 最新 ADR
+11. 当前实验结果
