@@ -54,7 +54,7 @@ def compare_fit(case_name: str, kwargs: dict[str, Any]) -> dict[str, Any]:
     matrix_source = source.A_ if source.geometry == "joint" else source.B_
     matrix_standalone = standalone.A_ if standalone.geometry == "joint" else standalone.B_
 
-    assert_array("matrix_max_abs_diff", standalone=matrix_standalone, right=matrix_source, record=record)
+    assert_array("matrix_max_abs_diff", matrix_standalone, matrix_source, record)
 
     if isinstance(source.bandwidth_, tuple):
         assert_array("bandwidth_max_abs_diff", standalone.bandwidth_, source.bandwidth_, record)
@@ -80,13 +80,20 @@ def compare_fit(case_name: str, kwargs: dict[str, Any]) -> dict[str, Any]:
     assert_scalar("final_loo_loss_abs_diff", standalone.final_loo_loss_, source.final_loo_loss_, record)
 
     for key in sorted(set(standalone.diagnostics_) & set(source.diagnostics_)):
-        assert_scalar(f"diagnostic_{key}_abs_diff", standalone.diagnostics_[key], source.diagnostics_[key], record)
+        assert_scalar(
+            f"diagnostic_{key}_abs_diff",
+            standalone.diagnostics_[key],
+            source.diagnostics_[key],
+            record,
+        )
 
     assert standalone.n_iter_ == source.n_iter_
     assert standalone.converged_ == source.converged_
     assert standalone.stop_reason_ == source.stop_reason_
     assert len(standalone.bandwidth_history_) == len(source.bandwidth_history_)
-    for index, (left, right) in enumerate(zip(standalone.bandwidth_history_, source.bandwidth_history_)):
+    for index, (left, right) in enumerate(
+        zip(standalone.bandwidth_history_, source.bandwidth_history_)
+    ):
         if isinstance(right, tuple):
             assert_array(f"bandwidth_history_{index}_max_abs_diff", left, right, record)
         else:
