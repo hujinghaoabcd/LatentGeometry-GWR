@@ -270,7 +270,7 @@ class LGGWR:
         self.B_=bm; final=float(np.mean((y-self._forward_loo_sep(X,y,Kg,a@self.B_.T,ha)['yhat'])**2)+self.lambda_reg*np.sum(self.B_**2))
         if not hist:hist=[final];best=final
         return _OptimisationResult(self.B_.copy(),tuple(hist),float(best),float(final),len(hist),conv,reason)
-    def _select_bandwidth_aicc(self,X,y,z,n_grid=12):
+    def _select_bandwidth_aicc(self,X,y,z,n_grid=16):
         D=cdist(z,z);n,p=X.shape;s=np.sort(D,axis=1);lo=max(float(np.median(s[:,min(p+2,n-1)])),1e-6);hi=max(float(D.max()),lo*4);cand=list(np.geomspace(lo,hi,n_grid));
         if isinstance(self.bandwidth_,Real):cand.append(float(self.bandwidth_))
         best=(np.inf,cand[0])
@@ -278,7 +278,7 @@ class LGGWR:
             b,S=self._local_fit_with_hat(X,y,z,float(h));f=np.einsum('ij,ij->i',X,b);a=compute_diagnostics(y,f,S,True)['aicc'];
             if np.isfinite(a) and a<best[0]:best=(a,float(h))
         return best[1]
-    def _select_bandwidths_aicc(self,X,y,Dg,z,current=None,n_grid=6):
+    def _select_bandwidths_aicc(self,X,y,Dg,z,current=None,n_grid=7):
         n,p=X.shape
         def bounds(D): s=np.sort(D,axis=1);lo=max(float(np.median(s[:,min(p+2,n-1)])),1e-6);return lo,max(float(D.max()),lo*4)
         gl,gu=bounds(Dg);gg=list(np.geomspace(gl,gu,n_grid));ag=[np.inf]
