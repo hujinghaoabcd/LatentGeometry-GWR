@@ -1,0 +1,63 @@
+{
+  "validation": "standalone LG-GWR vs pinned pyGWRx LGGWR",
+  "source_repository": "hujinghaoabcd/pyGWRx",
+  "source_commit": "ee26988a0c5b7ed15edf2d6065f538ed0d4d5429",
+  "standalone_validation_commit": "6f22c76029d8119d6d3d61ba673e4a97e26dded4",
+  "github_actions_run_id": 33531288453,
+  "artifact_id": 9809835430,
+  "atol": 1e-10,
+  "rtol": 1e-10,
+  "cases": [
+    {
+      "case": "joint_fixed",
+      "bandwidth_difference": 0.0,
+      "matrix_max_abs_difference": 2.220446049250313e-16,
+      "coefficients_max_abs_difference": 4.440892098500626e-16,
+      "fitted_values_max_abs_difference": 8.881784197001252e-16,
+      "hat_matrix_max_abs_difference": 8.326672684688674e-17,
+      "final_loo_loss_difference": 0.0,
+      "aicc_difference": 0.0,
+      "largest_recorded_difference": 2.842170943040401e-14,
+      "passes": true
+    },
+    {
+      "case": "joint_aicc_reselection",
+      "bandwidth_difference": 0.0,
+      "matrix_max_abs_difference": 1.1102230246251565e-16,
+      "coefficients_max_abs_difference": 4.440892098500626e-16,
+      "fitted_values_max_abs_difference": 8.881784197001252e-16,
+      "hat_matrix_max_abs_difference": 1.249000902703301e-16,
+      "final_loo_loss_difference": 1.1102230246251565e-16,
+      "aicc_difference": 0.0,
+      "largest_recorded_difference": 1.4210854715202004e-14,
+      "passes": true
+    },
+    {
+      "case": "separable_fixed",
+      "bandwidth_difference": 0.0,
+      "matrix_max_abs_difference": 2.7755575615628914e-17,
+      "coefficients_max_abs_difference": 6.661338147750939e-16,
+      "fitted_values_max_abs_difference": 8.881784197001252e-16,
+      "hat_matrix_max_abs_difference": 5.551115123125783e-17,
+      "final_loo_loss_difference": 5.551115123125783e-17,
+      "aicc_difference": 0.0,
+      "largest_recorded_difference": 8.881784197001252e-16,
+      "passes": true
+    },
+    {
+      "case": "separable_aicc_reselection",
+      "bandwidth_difference": 0.0,
+      "matrix_max_abs_difference": 1.1102230246251565e-16,
+      "coefficients_max_abs_difference": 3.1086244689504383e-15,
+      "fitted_values_max_abs_difference": 1.3322676295501878e-15,
+      "hat_matrix_max_abs_difference": 2.220446049250313e-16,
+      "final_loo_loss_difference": 8.326672684688674e-17,
+      "aicc_difference": 0.0,
+      "largest_recorded_difference": 3.1086244689504383e-15,
+      "passes": true
+    }
+  ],
+  "overall_largest_recorded_difference": 2.842170943040401e-14,
+  "passes_validation": true,
+  "note": "The first strict parity run exposed accidental extraction drift in bandwidth-search grid sizes (joint 12 vs source 16; separable 6 vs source 7). The standalone defaults were restored to the pinned pyGWRx values before this passing run. No tolerance was relaxed."
+}
