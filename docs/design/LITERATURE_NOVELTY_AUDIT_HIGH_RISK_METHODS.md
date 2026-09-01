@@ -2,7 +2,29 @@
 
 Status: **active literature audit; no final novelty claim accepted.**
 
-This note records methods that are mathematically or conceptually close to joint LG-GWR and therefore constrain any future novelty claim.
+This note records methods that are mathematically or conceptually close to joint LG-GWR and therefore inform future novelty claims. **Similarity to prior work does not by itself invalidate an LG-GWR contribution.** The purpose of this audit is to prevent overclaiming while also avoiding the opposite error of over-narrowing the contribution until only one algebraic detail remains.
+
+## 0. Novelty-assessment calibration — IMPORTANT
+
+The literature audit must distinguish at least four levels of overlap:
+
+1. **shared motivation / scientific problem** — two papers ask related questions, but may solve them differently;
+2. **shared conceptual ingredient** — e.g. context, attribute similarity, non-Euclidean distance, spatial deformation;
+3. **partial technical overlap** — one component or mathematical device is similar, but the full model, estimation target, interpretation or scientific role differs;
+4. **substantive method equivalence / near-isomorphism** — the complete formulation, learned object, estimation mechanism and intended scientific interpretation are materially the same.
+
+Only level 4 strongly threatens a core method novelty claim. Levels 1–3 usually constrain wording and priority claims, but can still form part of a broader original contribution when combined in a new model architecture, estimation framework, scientific interpretation, or validated geographic use case.
+
+Therefore, avoid binary language such as "this idea is already taken" unless the overlap is genuinely method-level. Prefer statements such as:
+
+- "broad priority cannot be claimed without qualification";
+- "this ingredient has precedent";
+- "the contribution must be formulated at the model/framework level rather than at the ingredient level";
+- "the difference must be demonstrated rather than assumed".
+
+A paper can remain substantially innovative even when several of its ingredients have precedents. The correct question is whether **the complete LG-GWR formulation, its estimand, its geographic interpretation, and its empirical behavior constitute a distinct methodological contribution**.
+
+This calibration also applies retrospectively to the cautious statements below: many are intended to rule out overly broad *first-ever* claims, not to imply that the corresponding ingredient has no innovative role within LG-GWR.
 
 ## 1. User-facing narrative constraint
 
@@ -16,7 +38,7 @@ Paper: *Using Contextualized Geographically Weighted Regression to Model the Spa
 
 Key point: geographically close observations may be contextually/socially distant. Context variables are used to modify the geographic weighting matrix so proximity reflects both geographic distance and an attribute/context space.
 
-Implication: joint LG-GWR cannot claim that it is the first GWR approach to incorporate geographic context into locality.
+Implication: the broad idea that geographic context can modify GWR locality has precedent. This does **not** by itself make a joint LG-GWR geometry non-novel; it means the paper should distinguish its complete formulation from earlier contextual weighting approaches.
 
 ## 3. Spatial-attribute weighted GWR (Shi, Zhang & Liu, 2006)
 
@@ -24,13 +46,13 @@ Paper: *A new spatial-attribute weighting function for geographically weighted r
 
 Key point: combines geographic space and attribute space in GWR weighting.
 
-Implication: "space + attributes in GWR weights" is a long-established idea and cannot be the main novelty claim.
+Implication: a broad *first-ever* claim for combining spatial and attribute information in GWR would be unsafe. However, this is an ingredient-level precedent, not evidence that every joint spatial-context formulation is equivalent.
 
 ## 4. Spatial/temporal/context generalized distances
 
 GTWR and contextual GTWR extensions use weighted combinations of spatial, temporal and contextual distances. One representative contextual GTWR formulation combines squared contextual, spatial and temporal distances with separate scale parameters.
 
-Implication: constructing a higher-dimensional generalized proximity from multiple dimensions is not by itself novel.
+Implication: constructing generalized proximity from multiple dimensions has precedent. The novelty question for LG-GWR is therefore about the **particular joint geometry, learned object, interaction structure, estimation framework and geographic interpretation**, not merely the number of dimensions entering a distance.
 
 ## 5. Full bandwidth-matrix SVC (Hu et al., 2021)
 
@@ -38,7 +60,7 @@ Paper: *Selection of the Bandwidth Matrix in Spatial Varying Coefficient Models 
 
 Key point: a full two-dimensional bandwidth matrix is used in an SVC/local-linear GWR framework to represent anisotropic smoothing.
 
-Implication: matrix-valued Mahalanobis-type geographic distance and learned anisotropy in the 2D coordinate domain are not new by themselves.
+Implication: matrix-valued Mahalanobis-type geographic distance and learned anisotropy in the 2D coordinate domain have clear precedent. This does not invalidate a higher-dimensional joint geography-context metric; it narrows the safe priority claim from "matrix distance" to the full LG-GWR formulation.
 
 Important distinction from current joint LG-GWR: Hu et al.'s matrix acts on geographic coordinates `(u,v)` only, whereas joint LG-GWR acts on concatenated geographic position and process-relevant context.
 
@@ -55,12 +77,14 @@ SANNWR explicitly:
 - learns a nonlinear "spatial-attribute unified distance metric";
 - then uses this learned unified proximity in neural-network weighted regression.
 
-Therefore joint LG-GWR **must not claim**:
+Therefore broad priority claims such as the following would require qualification:
 
 - first learned spatial-attribute distance in GWR;
 - first unified spatial-attribute proximity;
 - first nonlinear/data-driven fusion of spatial and attribute proximity;
 - first method in which model training changes GWR proximity.
+
+These precedents do **not** imply that the complete joint LG-GWR formulation is non-novel.
 
 ### Structural distinction from joint LG-GWR
 
@@ -91,15 +115,13 @@ Key components:
 - learned joint proximity combining spatial proximity and attribute similarity;
 - comparisons against GWR, SGWR, GNNWR, SANNWR and other neural variants.
 
-Implication: even multi-attribute learned spatial-attribute joint proximity is now established in the GWR literature.
-
-Therefore "joint proximity" or "learned unified proximity" alone is **not** a safe novelty claim for LG-GWR.
+Implication: learned spatial-attribute joint proximity has precedent in recent GWR literature. This means "joint proximity" alone is too broad as a priority claim, but it does not determine whether an explicit parsimonious PSD geographic-context geometry with different inferential and interpretive properties is a distinct contribution.
 
 ## 8. CEGWR 2026
 
 CEGWR constructs high-dimensional contextual descriptors involving location/distance structure, direction and attributes, whitens them, and defines contextual distance in the resulting coordinate system.
 
-Implication: non-separable/context-entangled geographic weighting has also entered recent GWR literature.
+Implication: context-entangled geographic weighting has entered recent GWR literature. The comparison should therefore focus on how the contextual representation is formed, what object is estimated, whether geography-context interactions are explicit, and what scientific quantities can be interpreted.
 
 ## 9. Spatial deformation and warped-space lineage
 
@@ -112,31 +134,23 @@ Relevant lineage includes:
 
 Eldridge & Jones are especially useful geographically: equivalent physical distances can have spatially uneven interaction effects, and distance decay can be contextual rather than universal.
 
-Implication: "warped geographic space" is an established geographic/spatial-statistical idea, not an LG-GWR invention.
+Implication: warped/deformed space is an established lineage. LG-GWR should therefore claim novelty, if warranted, at the level of **how deformation/geometry is defined for spatially varying regression relationships**, rather than claiming invention of spatial deformation itself.
 
-## 10. Current narrowed novelty candidate for joint LG-GWR
+## 10. Current candidate novelty space for joint LG-GWR
 
-After this audit, none of the following is individually safe as the main novelty claim:
+The audit should **not** reduce the contribution to a single surviving matrix block or one algebraic term. Instead, current candidate novelty should be assessed at several interacting levels:
 
-- adding attributes/context to GWR;
-- spatial + attribute weighting;
-- contextualized locality;
-- non-Euclidean distance;
-- Mahalanobis distance;
-- anisotropy;
-- bandwidth matrix;
-- data-driven GWR weights;
-- learned spatial-attribute unified distance;
-- neural/nonlinear joint proximity;
-- latent/deformed geographic space.
+### 10.1 Geographic/statistical problem
 
-The currently surviving structural candidate is narrower:
+LG-GWR asks whether the locality of spatially varying regression relationships can be represented by an effective geography that depends jointly on physical position and process-relevant geographic context.
 
-> **an explicit, low-dimensional, interpretable PSD geometry defined directly on the joint geographic-context coordinate system, with non-separable geography-context cross terms, used to characterize locality of spatially varying regression relationships.**
+### 10.2 Model architecture
 
-Mathematically:
+The current joint formulation uses
 
 `u=[s,c]`
+
+and
 
 `d_ij^2 = (u_i-u_j)^T M (u_i-u_j)`
 
@@ -144,17 +158,45 @@ with
 
 `M = [[M_ss, M_sc],[M_cs,M_cc]]`.
 
-The potential distinguishing object is not merely the existence of a joint proximity, but the explicit geometric structure and especially the interpretable cross-coupling `M_sc`.
+This is a single explicit geometry rather than a post-hoc product/sum of separate geographic and attribute kernels or a neural fusion of precomputed scalar distances.
 
-This candidate still requires additional checks:
+### 10.3 Interaction structure
 
-1. search for high-dimensional SVC/local-polynomial bandwidth matrices operating on `[space, context]` rather than space alone;
-2. search for explicit PSD/Mahalanobis metric learning in GWR/SVC;
-3. search for regression-specific spatial deformation of coefficient surfaces;
-4. establish whether explicit metric structure yields scientific advantages over neural joint-proximity methods (stability, invariance, interpretability, parsimonious parameterization, null behavior, geographic mapping);
-5. avoid claiming priority until these checks are complete.
+The cross block `M_sc` is one **important mathematical expression** of non-separable geography-context interaction, but it should not be treated as the entire innovation by itself.
 
-## 11. Scientific framing remains open
+### 10.4 Estimand and interpretation
+
+Potentially important distinctions include an explicit PSD metric shape, identifiable invariant representations, effective bandwidth, interpretable geographic-context coupling, and map-based analysis of how locality changes.
+
+### 10.5 Parsimony and scientific transparency
+
+Relative to neural joint-proximity approaches, an explicit low-dimensional geometry may offer a different balance of flexibility, stability, identifiability and geographic interpretation. These are possible contributions to be demonstrated empirically, not assumed.
+
+### 10.6 Complete-framework novelty
+
+The strongest eventual contribution may be the **combination** of:
+
+- spatially varying relationship modeling;
+- process-relevant geographic context;
+- a joint non-separable geographic-context geometry;
+- an explicit parsimonious metric representation;
+- a geographically interpretable locality framework;
+- principled scale/identifiability treatment;
+- simulations designed around geographic-process hypotheses rather than only predictive benchmarks.
+
+Many individual ingredients have precedents. The novelty question is whether this complete configuration has a genuine precedent. At present, no final answer has been accepted.
+
+## 11. Remaining high-priority searches
+
+1. high-dimensional SVC/local-polynomial bandwidth matrices operating on `[space, context]` rather than space alone;
+2. explicit PSD/Mahalanobis metric learning in GWR/SVC;
+3. regression-specific spatial deformation of coefficient surfaces;
+4. methods that estimate cross-coupled geography-context geometry rather than merely concatenate/fuse separate distances;
+5. work showing an equivalent combination of identifiable metric shape, scale and local-regression interpretation.
+
+Avoid claiming priority until these checks are complete, but equally avoid treating partial precedent as proof of method equivalence.
+
+## 12. Scientific framing remains open
 
 Even if the algorithm internally optimizes `M` using a regression objective, the paper need not foreground "supervised metric learning". The scientific framing under consideration remains:
 
