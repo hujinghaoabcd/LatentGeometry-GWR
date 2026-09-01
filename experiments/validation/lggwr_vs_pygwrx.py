@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+# Strict source-parity harness; do not relax tolerances to hide extraction drift.
+
 import json
 from pathlib import Path
 from typing import Any
