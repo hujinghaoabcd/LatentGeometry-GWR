@@ -1,0 +1,42 @@
+name: repair-baseline-parity
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/repair-baseline-parity.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore pinned pyGWRx bandwidth grid defaults
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/latentgeometry_gwr/lggwr.py')
+          text = path.read_text(encoding='utf-8')
+          old_joint = 'def _select_bandwidth_aicc(self,X,y,z,n_grid=12):'
+          new_joint = 'def _select_bandwidth_aicc(self,X,y,z,n_grid=16):'
+          old_sep = 'def _select_bandwidths_aicc(self,X,y,Dg,z,current=None,n_grid=6):'
+          new_sep = 'def _select_bandwidths_aicc(self,X,y,Dg,z,current=None,n_grid=7):'
+          if old_joint not in text or old_sep not in text:
+              raise SystemExit('Expected extracted bandwidth defaults not found')
+          text = text.replace(old_joint, new_joint, 1).replace(old_sep, new_sep, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit repair
+        run: |
+          git config user.name "Jinghao Hu"
+          git config user.email "hujinghao20@mails.ucas.ac.cn"
+          git add src/latentgeometry_gwr/lggwr.py
+          git commit -m "Restore pyGWRx bandwidth grid defaults"
+          git push origin HEAD:main
