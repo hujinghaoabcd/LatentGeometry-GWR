@@ -158,6 +158,48 @@ The analogous separable attribute objects are `C_a` and `b_a` from `(B,h_a)`.
 
 No optimizer change has yet been accepted.
 
+## Candidate paper/model paths — BOTH RETAINED
+
+Design note: `docs/design/JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md`.
+
+The project now explicitly retains two competing candidate directions. **Neither is the accepted final model.**
+
+### Path A — joint LG-GWR / learned geographic geometry
+
+Joint formulation uses `u_i=[s_i,c_i]`, `z_i=A u_i`, so geography and process-relevant context form one coupled geometry. With `M=A^T A` partitioned into geographic and contextual blocks, the cross block `M_sc` permits non-separable space–context coupling.
+
+Provisional strength:
+
+- stronger algorithmic novelty;
+- clearer distinction from SGWR-style “geographic weight + attribute-similarity weight” fusion;
+- candidate interpretation as **process-conditioned deformation/reconstruction of geographic geometry** rather than generic attribute similarity.
+
+Provisional risk:
+
+- physical geography may be excessively deformed or suppressed;
+- burden of geographic interpretation is higher;
+- must distinguish the method from generic supervised metric learning and newer contextual-geometry GWR variants such as CEGWR.
+
+### Path B — geography-preserving / separable process-conditioned locality
+
+Physical geographic distance remains explicit while a learned contextual component modifies the effective local weighting structure.
+
+Provisional strength:
+
+- stronger immediate geographic interpretation;
+- easier alignment with GWR, spatial proximity, geographic similarity/configuration, and process-conditioned locality.
+
+Provisional risk:
+
+- greater novelty overlap with SGWR, SGWR-GD and related similarity-GWR methods;
+- a simple product of geographic and contextual kernels is not sufficient as a final innovation.
+
+### Current decision rule
+
+Do **not** decide between Path A and Path B by predictive accuracy alone. Final selection must consider geographic faithfulness, null behavior, process sensitivity, boundaries, stability/identifiability, interpretability, novelty against recent literature, and real-data geographic plausibility.
+
+Terminology: avoid “空间借样 / 信息借用”. Prefer “局地信息整合”, “邻域贡献”, “局部样本权重”, “有效邻域构成”, or “局地权重分配”.
+
 ## Immediate next tasks
 
 1. quantify the practical effect of initialization-dependent Frobenius norm across random restarts, especially under fixed bandwidth;
@@ -165,7 +207,9 @@ No optimizer change has yet been accepted.
 3. compare current factor parameterization vs explicit canonicalization in controlled synthetic regimes;
 4. decide whether the paper should optimize a factor but report a canonical metric, or optimize an explicitly normalized PSD metric shape;
 5. after identification is settled, audit the LOO objective and geometry–bandwidth alternating optimization;
-6. only then compare joint vs geography-preserving/separable formulations as candidate final algorithms.
+6. design a controlled **Path A vs Path B** comparison that can distinguish non-separable joint geometry from geography-preserving contextual modulation;
+7. explicitly compare against SGWR / SGWR-GD / EDSGWR / CEGWR / supervised spatial metric learning where technically appropriate;
+8. only after these audits select the paper's primary formulation and begin full benchmark / real-data experiments.
 
 ## Do not do yet
 
@@ -173,12 +217,15 @@ No optimizer change has yet been accepted.
 - do not claim raw `metric_matrix_` is uniquely identified without stating the scale convention;
 - do not benchmark-optimize before identification and objective coupling are resolved;
 - do not introduce nonlinear embeddings just for accuracy;
-- do not freeze joint geometry as the paper's final model.
+- do not freeze joint geometry as the paper's final model;
+- do not discard joint geometry merely because geography-preserving formulations are easier to interpret;
+- do not discard geography-preserving formulations merely because joint geometry appears more algorithmically novel.
 
 ## Key documents
 
 - `docs/design/LGGWR_BASELINE_SPEC.md`
 - `docs/design/METRIC_BANDWIDTH_IDENTIFIABILITY.md`
+- `docs/design/JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md`
 - `docs/design/RESEARCH_QUESTIONS.md`
 - `results/validation/lggwr_vs_pygwrx/summary.json`
 - `results/validation/basicgwr_reference_anchor/summary.json`
