@@ -25,6 +25,17 @@
 - `docs/design/LGGWR_BASELINE_SPEC.md`
   - 当前 baseline 的逐步数学与代码对应关系。
 
+- `docs/design/METRIC_BANDWIDTH_IDENTIFIABILITY.md`
+  - `A/B`、PSD metric 与 bandwidth 的尺度/旋转可识别性审查；
+  - 当前候选 canonical representation：normalized metric shape + effective bandwidth。
+
+- `docs/design/JOINED_VS_GEOGRAPHY_PRESERVING_PATHS.md`
+  - **当前最重要的双路线设计记录之一**；
+  - 同时保留 joint LG-GWR 与 geography-preserving/separable 两条候选主线；
+  - joint 路线强调 non-separable geographic-context geometry 与 `M_sc` cross-coupling，算法创新更强；
+  - geography-preserving 路线强调 physical geography anchor、process-conditioned locality 与更强地学可解释性；
+  - **尚未裁决，后续必须通过文献、理论、仿真和地理案例决定。**
+
 - `docs/design/RESEARCH_QUESTIONS.md`
   - 当前所有尚未冻结的模型设计问题。
 
