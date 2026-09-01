@@ -2,143 +2,183 @@
 
 ## Current phase
 
-**Phase A.3 — standalone baseline numerically anchored; theory audit next**
+**Phase B.1 — theory audit started: metric–bandwidth identifiability**
 
-当前仍未进入最终论文算法设计。pyGWRx 中的 LGGWR 已经抽离成独立 research baseline，软件层依赖已经移除，核心数学不变量与 pinned-source numerical parity 均已建立。
+The standalone baseline is now numerically anchored both to the pinned pyGWRx LGGWR source and to an external standard-GWR reference chain. The project has therefore left extraction/ground-truthing and entered component-by-component theory audit. No final LG-GWR redesign has yet been accepted.
 
 ## Baseline extraction — COMPLETED
 
-已建立：
+Established:
 
-- `src/latentgeometry_gwr/lggwr.py` — 独立 LG-GWR research baseline；
-- `src/latentgeometry_gwr/gwr.py` — 最小标准 GWR 对照引擎；
-- `src/latentgeometry_gwr/core.py` — 仅保留本研究需要的输入、诊断与 summary helper；
-- `tests/test_lggwr.py` — joint geometry 核心不变量；
-- `tests/test_lggwr_separable_gradient.py` — separable analytical-gradient 验证；
-- `tests/test_gwr.py` — standard GWR smoke baseline；
-- `.github/workflows/tests.yml` — Python 3.10 / 3.12 永久 CI；
-- `.github/workflows/parity-pygwrx.yml` — pinned pyGWRx numerical-parity CI；
-- `docs/design/LGGWR_BASELINE_SPEC.md` — source-to-math baseline specification；
-- `results/validation/lggwr_vs_pygwrx/summary.json` — strict parity evidence。
+- `src/latentgeometry_gwr/lggwr.py` — standalone LG-GWR research baseline;
+- `src/latentgeometry_gwr/gwr.py` — trusted standard-GWR baseline;
+- `src/latentgeometry_gwr/bandwidth.py` — validated standard-GWR bandwidth policies reused from GeoRegime-GWR;
+- `src/latentgeometry_gwr/core.py` — research-only helpers;
+- mathematical invariant tests, including analytical-gradient and identifiability tests;
+- permanent Python 3.10 / 3.12 test CI;
+- pinned pyGWRx parity CI;
+- standard-GWR external-reference CI.
 
-## Source anchor
+## Source anchors
 
-pyGWRx source baseline：
+### LG-GWR source baseline
 
 - repository: `hujinghaoabcd/pyGWRx`
 - source: `src/pygwrx/models/lg_gwr.py`
-- pinned source snapshot: `ee26988a0c5b7ed15edf2d6065f538ed0d4d5429`
-- class: `LGGWR`
+- pinned snapshot: `ee26988a0c5b7ed15edf2d6065f538ed0d4d5429`
 
-当前独立实现不是成熟软件包复制品。它刻意删除 pyGWRx 的 package-wide API、文档和通用软件层，只保留论文研究所需数学行为。
+### Standard-GWR reference baseline
+
+- repository: `hujinghaoabcd/GeoRegime-GWR`
+- pinned snapshot: `428336399da87eb4ada4f97dfc5cc1993fa4b7e9`
+- external implementation: `mgwr==2.2.1`
+- canonical data: Georgia GWR example, 159 counties
 
 ## Validation status
 
-### Standalone invariant tests
+### 1. Standalone LG-GWR invariants
 
-当前研究测试覆盖：
+Protected properties include:
 
-1. joint analytical gradient vs central finite difference — Gaussian；
-2. joint analytical gradient vs central finite difference — bisquare；
-3. joint analytical gradient vs central finite difference — exponential；
-4. separable analytical gradient vs central finite difference — Gaussian；
-5. separable analytical gradient vs central finite difference — bisquare；
-6. synthetic training improves/preserves best LOO state；
-7. geometry standardisation / unit invariance；
-8. deterministic restart reproducibility；
-9. DataFrame prediction reproduces training fitted values；
-10. separable `h_a = infinity` reduces to geographic GWR；
-11. failed refit clears fitted state；
-12. standalone standard GWR smoke behaviour。
+- joint analytical gradient vs central finite difference for Gaussian / bisquare / exponential;
+- separable analytical gradient checks;
+- geometry unit invariance;
+- deterministic restarts;
+- prediction consistency;
+- separable `h_a = infinity` geographic-GWR reduction;
+- failed-refit state clearing;
+- metric/bandwidth scale and latent-rotation invariances.
 
-Permanent CI has passed on Python 3.10 and Python 3.12.
+### 2. Strict pyGWRx parity — PASSED
 
-### Strict pyGWRx parity — PASSED
+Harness: `experiments/validation/lggwr_vs_pygwrx.py`
 
-Validation harness:
+GitHub Actions run: `33531288453`
 
-- `experiments/validation/lggwr_vs_pygwrx.py`
-- GitHub Actions run: `33531288453`
-- tolerance: `atol = rtol = 1e-10`
+Tolerance: `atol = rtol = 1e-10`.
 
-Compared cases:
+Cases:
 
-1. joint geometry + fixed bandwidth；
-2. joint geometry + AICc bandwidth reselection；
-3. separable geometry + fixed bandwidth；
-4. separable geometry + AICc bandwidth reselection。
+1. joint + fixed bandwidth;
+2. joint + AICc reselection;
+3. separable + fixed bandwidth;
+4. separable + AICc reselection.
 
-Compared state/output includes:
+Result:
 
-- `A_` / `B_`；
-- bandwidth and bandwidth history；
-- latent coordinates；
-- full local parameter matrices；
-- fitted values and residuals；
-- hat matrix；
-- learned metric matrix and contributions；
-- LOO loss history / best loss / final loss；
-- Gaussian GWR diagnostics including AICc；
-- prediction results；
-- iteration and stopping state。
+- all four cases passed;
+- bandwidth differences = 0;
+- AICc differences = 0;
+- largest local-coefficient difference ≈ `3.11e-15`;
+- overall largest recorded floating-point difference ≈ `2.84e-14`.
 
-Final result:
+Evidence: `results/validation/lggwr_vs_pygwrx/summary.json`.
 
-- all 4 cases passed；
-- bandwidth differences = `0`；
-- AICc differences = `0`；
-- largest local-coefficient difference ≈ `3.11e-15`；
-- overall largest recorded floating-point difference ≈ `2.84e-14`；
-- therefore standalone behaviour matches the pinned pyGWRx source to machine precision under the tested configurations。
+The audit caught and corrected extraction drift in bandwidth-grid defaults (`joint 12 -> 16`, `separable 6 -> 7`) without relaxing tolerance.
 
-### Extraction bug found and corrected during parity audit
+### 3. Standard-GWR reference anchor — PASSED
 
-The first strict parity run deliberately failed and exposed an extraction drift:
+Harness: `experiments/validation/basicgwr_reference_anchor.py`
 
-- pyGWRx joint bandwidth-search grid: `n_grid = 16`；
-- extracted standalone value had been reduced to `12`；
-- pyGWRx separable bandwidth-search grid: `n_grid = 7`；
-- extracted standalone value had been reduced to `6`。
+GitHub Actions run: `33532293971`.
 
-These defaults were restored to `16` and `7`. No validation tolerance was relaxed. After correction, all strict parity cases passed.
+Evidence: `results/validation/basicgwr_reference_anchor/summary.json`.
 
-## Current baseline definition
+Canonical Georgia results:
 
-The extracted LG-GWR retains the pinned pyGWRx research structure:
+- research-default exhaustive adaptive AICc: standalone `k=116`, GeoRegime-GWR `k=116`;
+- all research-default parameters, fitted values, residuals and hat matrix: exact zero difference against pinned GeoRegime-GWR;
+- mgwr-compatible search: standalone `k=117`, GeoRegime-GWR `k=117`, `mgwr 2.2.1 k=117`;
+- standalone vs mgwr max parameter difference: `5.55e-16`;
+- standalone vs mgwr max fitted difference: `5.55e-16`;
+- standalone vs mgwr max hat-matrix difference: `5.55e-17`;
+- standalone AICc = mgwr AICc = `299.0508086830288`;
+- fixed-distance path is exactly equal to the pinned GeoRegime implementation, but is not claimed as independently externally validated.
 
-- geometry modes: `joint`, `separable`；
-- kernels: Gaussian, bisquare, exponential；
-- geometry training: analytical leave-one-out gradient；
-- optimiser: NumPy Adam + gradient clipping + early stopping；
-- optional bandwidth reselection by Gaussian GWR AICc；
-- scale constraints: Frobenius, orthogonal, none；
-- final local weighted least-squares refit；
-- prediction and metric outputs。
+**Standard GWR is now treated as frozen infrastructure rather than an LG-GWR research target.**
 
-**This is a validated baseline snapshot, not the final paper algorithm.**
+## Current LG-GWR baseline definition
+
+The extracted LG-GWR still retains the pinned pyGWRx structure:
+
+- geometry: `joint`, `separable`;
+- kernels: Gaussian, bisquare, exponential;
+- analytical LOO geometry gradient;
+- NumPy Adam + gradient clipping + early stopping;
+- optional AICc bandwidth reselection;
+- Frobenius / orthogonal / none scale constraints;
+- local weighted least-squares refit;
+- prediction and metric outputs.
+
+**This remains a validated baseline snapshot, not the final paper algorithm.**
+
+## Theory audit B.1 — metric–bandwidth identifiability
+
+Design note: `docs/design/METRIC_BANDWIDTH_IDENTIFIABILITY.md`.
+
+For joint geometry,
+
+`r_ij = ||A(u_i-u_j)|| / h`
+
+implies
+
+`r_ij^2 = (u_i-u_j)^T [A^T A / h^2] (u_i-u_j)`.
+
+Thus the kernel neighbourhood system identifies the combined PSD object
+
+`H = A^T A / h^2`,
+
+not `A` and `h` separately.
+
+Two exact symmetries are now explicitly recognized and tested:
+
+1. global scale: `(A,h) -> (cA,ch)`, `c>0`;
+2. latent rotation: `A -> Q A`, where `Q^T Q = I`.
+
+Consequences:
+
+- `A` is a computational factor, not a unique scientific estimand;
+- raw `M=A^T A` removes rotation ambiguity but remains scale-dependent unless a scale convention is imposed;
+- current `diag(M)/trace(M)` contributions are scale/rotation invariant but omit off-diagonal geometry;
+- current Frobenius projection is a numerical scale-fixing convention, not an identification theorem.
+
+Leading paper-facing candidate parameterization:
+
+`C = (A^T A) / trace(A^T A)`, with `trace(C)=1`,
+
+and effective bandwidth
+
+`b = h / ||A||_F`.
+
+Then
+
+`r_ij = sqrt(delta_ij^T C delta_ij) / b`.
+
+The analogous separable attribute objects are `C_a` and `b_a` from `(B,h_a)`.
+
+No optimizer change has yet been accepted.
 
 ## Immediate next tasks
 
-1. Expand the standalone `BasicGWR` validation so standard-GWR behaviour is anchored to the already validated GeoRegime-GWR / external mgwr results rather than only a smoke test.
-2. Begin component-by-component LG-GWR theory audit using:
-   `source behavior -> mathematical statement -> literature check -> targeted simulation -> keep/modify/remove`.
-3. Resolve metric/bandwidth scale identification before interpreting learned metric contributions.
-4. Audit whether the identifiable object should be `A`, `A^T A`, or an explicitly parameterised metric matrix.
-5. Compare joint geometry with geography-preserving/separable alternatives before selecting the paper's primary formulation.
-6. Audit LOO objective, AICc bandwidth coupling, latent dimension, standardisation, constraints and restart policy before benchmark optimisation.
-7. Only after the above begin theory-driven algorithm redesign and final paper experiments.
+1. quantify the practical effect of initialization-dependent Frobenius norm across random restarts, especially under fixed bandwidth;
+2. expose canonical `(C,b)` and separable `(C_a,b_a)` as experimental diagnostics without changing fitted weights;
+3. compare current factor parameterization vs explicit canonicalization in controlled synthetic regimes;
+4. decide whether the paper should optimize a factor but report a canonical metric, or optimize an explicitly normalized PSD metric shape;
+5. after identification is settled, audit the LOO objective and geometry–bandwidth alternating optimization;
+6. only then compare joint vs geography-preserving/separable formulations as candidate final algorithms.
 
 ## Do not do yet
 
-- Do not claim current latent map is theoretically final.
-- Do not optimize benchmark accuracy before identification questions are resolved.
-- Do not add nonlinear neural embeddings simply because they improve fit.
-- Do not conflate learned latent distance with physical geographic distance.
-- Do not freeze joint geometry as the paper's main model before comparison with geography-preserving alternatives.
+- do not interpret rows of `A` or `B` as unique latent axes;
+- do not claim raw `metric_matrix_` is uniquely identified without stating the scale convention;
+- do not benchmark-optimize before identification and objective coupling are resolved;
+- do not introduce nonlinear embeddings just for accuracy;
+- do not freeze joint geometry as the paper's final model.
 
-## Main unresolved theory questions
-
-See:
+## Key documents
 
 - `docs/design/LGGWR_BASELINE_SPEC.md`
+- `docs/design/METRIC_BANDWIDTH_IDENTIFIABILITY.md`
 - `docs/design/RESEARCH_QUESTIONS.md`
+- `results/validation/lggwr_vs_pygwrx/summary.json`
+- `results/validation/basicgwr_reference_anchor/summary.json`
